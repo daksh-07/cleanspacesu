@@ -15,22 +15,36 @@ function assert(condition, message) {
 async function settlePage(page) {
   await page.evaluate(async () => {
     if (document.fonts?.ready) await document.fonts.ready;
+    for (const img of document.images) img.loading = 'eager';
   });
   await page.waitForTimeout(900);
 
   await page.evaluate(async () => {
     const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    const height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-    const step = Math.max(260, Math.floor(innerHeight * .72));
-    for (let y = 0; y < height; y += step) {
-      window.scrollTo(0, y);
-      await pause(55);
+    const reveals = [...document.querySelectorAll('.reveal')];
+    for (const el of reveals) {
+      el.scrollIntoView({ block: 'center', inline: 'nearest' });
+      await pause(85);
     }
-    window.scrollTo(0, height);
-    await pause(160);
+    window.scrollTo(0, document.documentElement.scrollHeight);
+    await pause(180);
     window.scrollTo(0, 0);
-    await pause(260);
+    await pause(420);
   });
+
+  await page.evaluate(async () => {
+    const pending = [...document.images]
+      .filter((img) => !img.complete)
+      .map((img) => new Promise((resolve) => {
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      }));
+    await Promise.race([
+      Promise.all(pending),
+      new Promise((resolve) => setTimeout(resolve, 4000))
+    ]);
+  });
+  await page.waitForTimeout(250);
 }
 
 async function exerciseInteractions(page, label, route, width) {
