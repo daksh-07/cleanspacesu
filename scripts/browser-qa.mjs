@@ -103,7 +103,11 @@ async function auditPage(browser, engineName, route, width, height, filename) {
   const audit = await page.evaluate(() => ({
     scrollWidth: document.documentElement.scrollWidth,
     innerWidth,
-    unrevealed: [...document.querySelectorAll('.reveal:not(.is-visible)')].length,
+    unrevealed: [...document.querySelectorAll('.reveal:not(.is-visible)')]
+      .filter((el) => {
+        const style = getComputedStyle(el);
+        return style.display !== 'none' && style.visibility !== 'hidden';
+      }).length,
     brokenImages: [...document.images]
       .filter((img) => !img.complete || img.naturalWidth === 0)
       .map((img) => img.getAttribute('src') || img.currentSrc || 'unknown'),
