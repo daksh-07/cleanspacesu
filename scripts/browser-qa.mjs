@@ -21,10 +21,14 @@ async function settlePage(page) {
 
   await page.evaluate(async () => {
     const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    document.documentElement.style.scrollBehavior = 'auto';
+    document.body.style.scrollBehavior = 'auto';
     const reveals = [...document.querySelectorAll('.reveal')];
     for (const el of reveals) {
-      el.scrollIntoView({ block: 'center', inline: 'nearest' });
-      await pause(85);
+      const rect = el.getBoundingClientRect();
+      const target = Math.max(0, window.scrollY + rect.top - (innerHeight - rect.height) / 2);
+      window.scrollTo(0, target);
+      await pause(110);
     }
     window.scrollTo(0, document.documentElement.scrollHeight);
     await pause(180);
