@@ -4,7 +4,7 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
       <nav class="nav" aria-label="Primary navigation">
-        <a class="brand" href="/" aria-label="Clean Space home"><span class="brand-logo-wrap"><img class="brand-logo brand-logo-white" src="/images/logo-white.webp" alt="Clean Space"><img class="brand-logo brand-logo-navy" src="/images/logo-navy.webp" alt="" aria-hidden="true"></span></a>
+        <a class="brand" href="/" aria-label="Clean Space home"><span class="brand-logo-wrap"><img class="brand-logo brand-logo-original" src="/images/logo.webp" alt="Clean Space — Let us do the magic"></span></a>
         <div class="nav-links">
           <a href="/services" ${path==='/services'?'aria-current="page"':''}>Services</a>
           <a href="/work" ${path==='/work'?'aria-current="page"':''}>Our work</a>
@@ -20,7 +20,7 @@
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
-            <a class="brand" href="/" aria-label="Clean Space home"><span class="brand-logo-wrap"><img class="brand-logo brand-logo-white" src="/images/logo-white.webp" alt="Clean Space"><img class="brand-logo brand-logo-navy" src="/images/logo-navy.webp" alt="" aria-hidden="true"></span></a>
+            <a class="brand" href="/" aria-label="Clean Space home"><span class="brand-logo-wrap"><img class="brand-logo brand-logo-original" src="/images/logo.webp" alt="Clean Space — Let us do the magic"></span></a>
             <p>Thoughtful home cleaning across Melbourne. Real work, carefully finished — so your home feels lighter the moment you walk in.</p>
           </div>
           <div class="footer-col"><h4>Explore</h4><a href="/services">Services</a><a href="/work">Our work</a><a href="/about">About</a></div>
@@ -51,5 +51,6 @@
       </aside>
     </div>`;
   document.querySelector('[data-site-nav]')?.insertAdjacentHTML('afterbegin', nav);
-  document.querySelector('[data-site-footer]')?.insertAdjacentHTML('beforeend', footer + drawer);
+  const mobileCta = `<button class="mobile-sticky-cta" data-open-quote><span>Request a clean</span><span aria-hidden="true">→</span></button>`;
+  document.querySelector('[data-site-footer]')?.insertAdjacentHTML('beforeend', footer + drawer + mobileCta);
 })();
