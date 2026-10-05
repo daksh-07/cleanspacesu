@@ -512,6 +512,9 @@ body.page-ready .hero-media::before {
 .page-hero h1 {
   text-wrap: balance;
 }
+.proof-grid {
+  grid-template-columns: 1fr 1fr;
+}
 .photo-card {
   border-radius: 30px;
   box-shadow: 0 24px 70px rgba(7,31,58,.12);
