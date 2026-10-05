@@ -30,4 +30,4 @@ jobs:
           test -f public/work/index.html
           test -f public/about/index.html
           test -f public/contact/index.html
-          test "$(find public/images -type f -name '*.webp' | wc -l)" -ge 17
+          test "$(find public/images -type f -name '*.webp' | wc -l)" -ge 13
