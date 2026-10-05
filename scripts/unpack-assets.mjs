@@ -8,8 +8,8 @@ const outputDir = path.join(root, 'public', 'images');
 
 fs.mkdirSync(outputDir, { recursive: true });
 const parts = fs.readdirSync(packDir)
-  .filter((name) => /^assets\.part\d+\.b64$/.test(name))
-  .sort((a, b) => Number(a.match(/\d+/)[0]) - Number(b.match(/\d+/)[0]));
+  .filter((name) => /^assets\.part\d+[a-z]?\.b64$/.test(name))
+  .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
 
 if (!parts.length) {
   console.log('No asset pack found; existing public/images assets are unchanged.');
