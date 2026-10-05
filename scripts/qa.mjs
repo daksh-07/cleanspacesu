@@ -7,8 +7,7 @@ const requiredPages=['index.html','services/index.html','work/index.html','about
 const requiredAssets=[
   'living-room-detail.webp','kitchen-floor.webp','bathroom-detail.webp','carpet-detail.webp',
   'drain-before.webp','drain-after.webp','kitchen-detail.webp','bathroom-tub-brand.webp',
-  'sink-before.webp','sink-after.webp','bathroom-transformation.webp','dusting-before-after.webp',
-  'tidying-bath-before-after.webp','bathroom-before-after.webp','brand-card-melbourne.webp',
+  'sink-before.webp','sink-after.webp','brand-card-melbourne.webp',
   'logo-white.webp','logo-navy.webp'
 ];
 
