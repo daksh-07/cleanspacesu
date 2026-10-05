@@ -54,9 +54,13 @@ for (const [rel, route] of pages) {
   }
 }
 
+const availableImages = fs.existsSync(path.join(publicDir, 'images'))
+  ? fs.readdirSync(path.join(publicDir, 'images')).filter((name) => /\.(webp|avif|jpe?g|png)$/i.test(name)).sort()
+  : [];
+
 for (const name of requiredAssets) {
   const filePath = path.join(publicDir, 'images', name);
-  if (!fs.existsSync(filePath)) throw new Error(`Missing image: ${name}`);
+  if (!fs.existsSync(filePath)) throw new Error(`Missing image: ${name}. Available built images: ${availableImages.join(', ')}`);
   if (fs.statSync(filePath).size < 1000) throw new Error(`Image looks invalid: ${name}`);
 }
 
