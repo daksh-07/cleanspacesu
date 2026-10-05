@@ -1,0 +1,9 @@
+{
+  "name": "clean-space-melbourne",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node scripts/unpack-assets.mjs",
+    "qa": "npm run build && node scripts/qa.mjs"
+  }
+}
