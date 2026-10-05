@@ -26,8 +26,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: QA gate
-        id: qa
+      - name: Static QA gate
+        id: staticqa
         continue-on-error: true
         run: node scripts/qa.mjs
 
@@ -40,43 +40,34 @@ jobs:
           test -f public/contact/index.html
           test "$(find public/images -type f -name '*.webp' | wc -l)" -ge 12
 
-      - name: Install responsive browser engines
-        run: npx -y playwright@1.56.1 install --with-deps chromium webkit
-
-      - name: Responsive browser capture
+      - name: Install browser QA runtime
         run: |
-          mkdir -p qa-artifacts
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium webkit
+
+      - name: Responsive browser QA
+        id: browserqa
+        continue-on-error: true
+        run: |
           python3 -m http.server 4173 --directory public > /tmp/clean-space-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill "$SERVER_PID" || true' EXIT
           sleep 2
-
-          for route in "" services work about contact; do
-            name="${route:-home}"
-            curl -fsS "http://127.0.0.1:4173/${route}" > /dev/null
-            npx -y playwright@1.56.1 screenshot -b webkit --viewport-size="390,844" --full-page "http://127.0.0.1:4173/${route}" "qa-artifacts/${name}-390-webkit.png"
-            npx -y playwright@1.56.1 screenshot -b chromium --viewport-size="1440,1000" --full-page "http://127.0.0.1:4173/${route}" "qa-artifacts/${name}-1440-chromium.png"
-          done
-
-          for width in 320 375 393 402 430; do
-            npx -y playwright@1.56.1 screenshot -b webkit --viewport-size="${width},844" --full-page "http://127.0.0.1:4173/" "qa-artifacts/home-${width}-webkit.png"
-          done
-
-          for width in 1280 1366 1728 1920; do
-            npx -y playwright@1.56.1 screenshot -b chromium --viewport-size="${width},1000" --full-page "http://127.0.0.1:4173/" "qa-artifacts/home-${width}-chromium.png"
-          done
+          node scripts/browser-qa.mjs
 
       - name: Upload responsive QA
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: clean-space-responsive-qa
-          path: qa-artifacts
+          path: |
+            qa-artifacts
+            public/images
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Enforce QA gate
-        if: steps.qa.outcome != 'success'
+      - name: Enforce release gates
+        if: steps.staticqa.outcome != 'success' || steps.browserqa.outcome != 'success'
         run: |
-          echo "Static QA gate failed; see the QA gate step for the exact asset/content blocker."
+          echo "One or more release gates failed. Review Static QA gate and Responsive browser QA."
           exit 1
