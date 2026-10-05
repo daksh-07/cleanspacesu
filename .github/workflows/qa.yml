@@ -21,9 +21,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - name: Install
-        run: npm install --ignore-scripts
       - name: Build and QA
         run: npm run qa
       - name: Verify static routes
@@ -33,4 +30,4 @@ jobs:
           test -f public/work/index.html
           test -f public/about/index.html
           test -f public/contact/index.html
-          find public/images -type f -name '*.webp' | wc -l
+          test "$(find public/images -type f -name '*.webp' | wc -l)" -ge 17
