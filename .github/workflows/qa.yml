@@ -13,7 +13,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,8 +23,13 @@ jobs:
         with:
           node-version: 22
 
-      - name: Build and QA
-        run: npm run qa
+      - name: Build
+        run: npm run build
+
+      - name: QA gate
+        id: qa
+        continue-on-error: true
+        run: node scripts/qa.mjs
 
       - name: Verify static routes
         run: |
@@ -69,3 +74,9 @@ jobs:
           path: qa-artifacts
           if-no-files-found: warn
           retention-days: 7
+
+      - name: Enforce QA gate
+        if: steps.qa.outcome != 'success'
+        run: |
+          echo "Static QA gate failed; see the QA gate step for the exact asset/content blocker."
+          exit 1
