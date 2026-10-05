@@ -9,8 +9,12 @@
   const backdrop = drawer?.querySelector('.quote-backdrop');
   let lastFocus = null;
 
+  requestAnimationFrame(() => document.body.classList.add('page-ready'));
+
   const onScroll = () => {
     header?.classList.toggle('scrolled', window.scrollY > 24);
+    const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+    header?.style.setProperty('--scroll-progress', Math.min(window.scrollY / max, 1));
     const hero = document.querySelector('.hero');
     if (hero) {
       const y = Math.min(window.scrollY * .055, 36);
@@ -54,6 +58,21 @@
     entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } });
   }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
   document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+  if (matchMedia('(pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.photo-card, .work-card').forEach((card) => {
+      const img = card.querySelector('img');
+      if (!img) return;
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        img.style.setProperty('--mx', `${((e.clientX-r.left)/r.width-.5)*8}px`);
+        img.style.setProperty('--my', `${((e.clientY-r.top)/r.height-.5)*8}px`);
+      }, { passive:true });
+      card.addEventListener('pointerleave', () => {
+        img.style.setProperty('--mx','0px'); img.style.setProperty('--my','0px');
+      });
+    });
+  }
 
   document.querySelectorAll('.ba').forEach((ba) => {
     const input = ba.querySelector('input');
