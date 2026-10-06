@@ -6,7 +6,7 @@
       <nav class="nav" aria-label="Primary navigation">
         <a class="brand" href="/" aria-label="Clean Space home">
           <span class="brand-logo-wrap">
-            <img class="brand-logo brand-logo-original" src="/images/logo-brand.webp" alt="Clean Space — Let us do the magic">
+            <img class="brand-logo brand-logo-original" src="/images/logo.webp" alt="Clean Space — Let us do the magic">
           </span>
         </a>
         <div class="nav-links" id="site-nav-links">
@@ -27,7 +27,7 @@
           <div class="footer-brand">
             <a class="brand" href="/" aria-label="Clean Space home">
               <span class="brand-logo-wrap">
-                <img class="brand-logo brand-logo-original" src="/images/logo-brand.webp" alt="Clean Space — Let us do the magic">
+                <img class="brand-logo brand-logo-original" src="/images/logo.webp" alt="Clean Space — Let us do the magic">
               </span>
             </a>
             <p>Thoughtful home cleaning across Melbourne. Real work, carefully finished — so your home feels lighter the moment you walk in.</p>
