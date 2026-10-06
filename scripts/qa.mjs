@@ -105,5 +105,5 @@ const robots = fs.readFileSync(path.join(publicDir, 'robots.txt'), 'utf8');
 if (!robots.includes(`Sitemap: ${origin}/sitemap.xml`)) throw new Error('robots.txt is missing sitemap discovery.');
 
 console.log(
-  `QA passed: ${pages.length} pages, ${requiredAssets.length} required images, ${new Set(imageRefs).size} referenced image assets, exact logo artwork, full-resolution client photography, canonical/OG shell and honest enquiry copy.`
+  `QA passed: ${pages.length} pages, ${requiredAssets.length} required images, ${new Set(imageRefs).size} referenced image assets, exact logo artwork, full-resolution client photography, canonical/OG shell, verified phone and choice-led quote flow.`
 );
