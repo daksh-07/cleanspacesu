@@ -82,10 +82,24 @@
       }, { threshold: .08, rootMargin: '0px 0px -4% 0px' })
     : null;
 
+  const revealVisibleNow = () => {
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => {
+      const style = getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden') return;
+      const rect = el.getBoundingClientRect();
+      if (rect.top < innerHeight * .96 && rect.bottom > 0) {
+        el.classList.add('is-visible');
+        observer?.unobserve(el);
+      }
+    });
+  };
+
   document.querySelectorAll('.reveal').forEach((el) => {
     if (observer) observer.observe(el);
     else el.classList.add('is-visible');
   });
+
+  requestAnimationFrame(revealVisibleNow);
 
   if (matchMedia('(pointer:fine)').matches && !reducedMotion) {
     document.querySelectorAll('.photo-card, .work-card').forEach((card) => {
@@ -142,7 +156,10 @@
 
   const onScroll = () => {
     if (scrollFrame) return;
-    scrollFrame = requestAnimationFrame(updateScrollState);
+    scrollFrame = requestAnimationFrame(() => {
+      updateScrollState();
+      revealVisibleNow();
+    });
   };
 
   updateScrollState();
