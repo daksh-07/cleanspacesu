@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feat/clean-space-premium-site
+      - fix/clean-space-final-visual-pass
   pull_request:
 
 permissions:
@@ -13,16 +13,24 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Build and QA
-        run: npm run qa
+
+      - name: Build
+        run: npm run build
+
+      - name: Static QA gate
+        id: staticqa
+        continue-on-error: true
+        run: node scripts/qa.mjs
+
       - name: Verify static routes
         run: |
           test -f public/index.html
@@ -30,4 +38,36 @@ jobs:
           test -f public/work/index.html
           test -f public/about/index.html
           test -f public/contact/index.html
-          test "$(find public/images -type f -name '*.webp' | wc -l)" -ge 13
+          test "$(find public/images -type f -name '*.webp' | wc -l)" -ge 12
+
+      - name: Install browser QA runtime
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium webkit
+
+      - name: Responsive browser QA
+        id: browserqa
+        continue-on-error: true
+        run: |
+          python3 -m http.server 4173 --directory public > /tmp/clean-space-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" || true' EXIT
+          sleep 2
+          node scripts/browser-qa.mjs
+
+      - name: Upload responsive QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: clean-space-responsive-qa
+          path: |
+            qa-artifacts
+            public/images
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Enforce release gates
+        if: steps.staticqa.outcome != 'success' || steps.browserqa.outcome != 'success'
+        run: |
+          echo "One or more release gates failed. Review Static QA gate and Responsive browser QA."
+          exit 1

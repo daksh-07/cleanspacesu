@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://cleanspacesu.vercel.app/sitemap.xml
