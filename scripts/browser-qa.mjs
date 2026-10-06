@@ -16,39 +16,47 @@ async function settlePage(page) {
   await page.evaluate(async () => {
     if (document.fonts?.ready) await document.fonts.ready;
     for (const img of document.images) img.loading = 'eager';
+
+    const pending = [...document.images].map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    });
+
+    await Promise.race([
+      Promise.all(pending),
+      new Promise((resolve) => setTimeout(resolve, 5000))
+    ]);
+
+    await Promise.all([...document.images].map(async (img) => {
+      try {
+        if (img.decode && img.complete && img.naturalWidth) await img.decode();
+      } catch (_) {}
+    }));
   });
-  await page.waitForTimeout(900);
+
+  await page.waitForTimeout(180);
 
   await page.evaluate(async () => {
     const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     document.documentElement.style.scrollBehavior = 'auto';
     document.body.style.scrollBehavior = 'auto';
     const reveals = [...document.querySelectorAll('.reveal')];
+
     for (const el of reveals) {
-      const rect = el.getBoundingClientRect();
-      const target = Math.max(0, window.scrollY + rect.top - (innerHeight - rect.height) / 2);
-      window.scrollTo(0, target);
-      await pause(110);
+      el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'auto' });
+      await pause(150);
     }
+
     window.scrollTo(0, document.documentElement.scrollHeight);
-    await pause(180);
+    await pause(220);
     window.scrollTo(0, 0);
-    await pause(420);
+    await pause(460);
   });
 
-  await page.evaluate(async () => {
-    const pending = [...document.images]
-      .filter((img) => !img.complete)
-      .map((img) => new Promise((resolve) => {
-        img.addEventListener('load', resolve, { once: true });
-        img.addEventListener('error', resolve, { once: true });
-      }));
-    await Promise.race([
-      Promise.all(pending),
-      new Promise((resolve) => setTimeout(resolve, 4000))
-    ]);
-  });
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(220);
 }
 
 async function exerciseInteractions(page, label, route, width) {
