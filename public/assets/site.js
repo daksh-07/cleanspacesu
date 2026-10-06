@@ -79,7 +79,7 @@
           entry.target.classList.add('is-visible');
           observer.unobserve(entry.target);
         });
-      }, { threshold: .08, rootMargin: '0px 0px -4% 0px' })
+      }, { threshold: 0, rootMargin: '0px' })
     : null;
 
   const revealVisibleNow = () => {
@@ -87,7 +87,7 @@
       const style = getComputedStyle(el);
       if (style.display === 'none' || style.visibility === 'hidden') return;
       const rect = el.getBoundingClientRect();
-      if (rect.top < innerHeight * .96 && rect.bottom > 0) {
+      if (rect.top < innerHeight && rect.bottom > 0) {
         el.classList.add('is-visible');
         observer?.unobserve(el);
       }
@@ -155,16 +155,21 @@
   };
 
   const onScroll = () => {
+    // Reveal synchronously so fast Safari/WebKit scroll sequences cannot skip
+    // elements between animation frames.
+    revealVisibleNow();
     if (scrollFrame) return;
-    scrollFrame = requestAnimationFrame(() => {
-      updateScrollState();
-      revealVisibleNow();
-    });
+    scrollFrame = requestAnimationFrame(updateScrollState);
   };
 
   updateScrollState();
+  revealVisibleNow();
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    revealVisibleNow();
+    onScroll();
+  }, { passive: true });
+  window.addEventListener('pageshow', revealVisibleNow, { passive: true });
 
   const buildEnquiry = (form) => {
     const data = new FormData(form);
