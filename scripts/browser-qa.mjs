@@ -121,6 +121,10 @@ async function exerciseInteractions(page, label, route, width) {
     assert(await page.locator('.quote-finish').count() === 1, `${label}: quote wizard did not reach completion`);
     assert(await page.locator('.quote-finish a').filter({ hasText: 'Text Clean Space' }).count() === 1, `${label}: quote wizard is missing SMS handoff`);
     assert(await page.locator('.quote-finish a').filter({ hasText: 'Call 0426 379 247' }).count() === 1, `${label}: quote wizard is missing verified phone handoff`);
+    assert(await page.locator('[data-start-over]').count() === 1, `${label}: quote wizard is not repeatable`);
+    await page.locator('[data-start-over]').click();
+    await page.waitForTimeout(120);
+    assert(await page.locator('.quote-step.is-active .choice').count() === 4, `${label}: quote wizard start-over did not reset to choices`);
     await page.locator('.quote-close').click();
     await page.waitForTimeout(140);
     assert(await page.locator('.quote-drawer').getAttribute('aria-hidden') === 'true', `${label}: quote drawer aria state is wrong when closed`);
