@@ -1843,3 +1843,61 @@ img[src*="brand-card-melbourne"] { object-position: 50% 50%; }
   .hero-media { min-height:350px;height:54svh; }
   .hero-title { font-size:3.15rem; }
 }
+
+
+/* Keep legacy 400px derivatives within honest display sizes until every
+   original has a complete high-resolution build payload. Dominant imagery
+   uses the 1179px premium originals; smaller supporting images stay compact. */
+.ba { max-width:400px; }
+@media (min-width:981px) {
+  .work-grid { grid-template-columns:repeat(3,minmax(0,1fr)); max-width:1180px; }
+  .work-card,.work-card:nth-child(n) { aspect-ratio:4/5; }
+  .work-card:first-child { grid-column:span 2; aspect-ratio:16/10; }
+  .work-card:nth-child(2) { aspect-ratio:auto; min-height:100%; }
+}
+@media (max-width:680px) {
+  .stacked {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:none;
+    gap:10px;
+  }
+  .stacked .photo-card {
+    min-height:0;
+    aspect-ratio:4/5;
+  }
+  .stacked .photo-card .caption small { display:none; }
+  .stacked .photo-card .caption span { display:none; }
+  .stacked .photo-card .caption { padding:10px; }
+  .stacked .photo-card .caption strong { font-size:.82rem; }
+
+  .gallery-item {
+    flex-basis:min(64vw,280px);
+    width:min(64vw,280px);
+  }
+
+  .work-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+  }
+  .work-card,.work-card:nth-child(n) {
+    grid-column:auto;
+    min-height:0;
+    aspect-ratio:4/5;
+  }
+  .work-card:first-child,
+  .work-card:nth-child(2) {
+    grid-column:1 / -1;
+    aspect-ratio:4/5;
+  }
+
+  .about-image {
+    width:min(100%,319px);
+    max-width:319px;
+    margin-inline:auto;
+    aspect-ratio:auto;
+    min-height:0;
+  }
+  .about-image img { width:100%; height:auto; object-fit:contain; }
+
+  .ba { max-width:400px; }
+}
