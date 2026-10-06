@@ -450,7 +450,25 @@ body::before{
 .contact-card,.form-card{
   border-radius:24px 0 24px 0!important;
 }
-.contact-card{background:var(--cs-navy)!important}
+.contact-card{
+  background:var(--cs-navy)!important;
+  color:white!important;
+}
+.contact-card h2,
+.contact-card .kicker,
+.contact-card .contact-link{
+  color:white!important;
+}
+.contact-card p{
+  color:rgba(255,255,255,.72)!important;
+}
+.contact-card .kicker{opacity:.72}
+.contact-card .contact-link{
+  border-top-color:rgba(255,255,255,.18)!important;
+}
+.contact-card .contact-link span:last-child{
+  color:rgba(255,255,255,.82)!important;
+}
 .contact-link{border-radius:12px!important}
 
 /* ---------- shared "presentation pages" ---------- */
