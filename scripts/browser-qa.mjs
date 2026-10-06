@@ -17,24 +17,34 @@ async function settlePage(page) {
     if (document.fonts?.ready) await document.fonts.ready;
     for (const img of document.images) img.loading = 'eager';
   });
-  await page.waitForTimeout(900);
+  await page.waitForTimeout(650);
 
-  await page.evaluate(async () => {
-    const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  // Drive each reveal through the viewport as separate browser interactions.
+  // Keeping this outside a single page.evaluate task prevents WebKit from
+  // coalescing multiple programmatic scrolls before paint/intersection work.
+  const reveals = page.locator('.reveal');
+  const count = await reveals.count();
+  for (let index = 0; index < count; index += 1) {
+    const el = reveals.nth(index);
+    const participates = await el.evaluate((node) => {
+      const style = getComputedStyle(node);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
+    if (!participates) continue;
+
+    await el.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(120);
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  }
+
+  await page.evaluate(() => {
     document.documentElement.style.scrollBehavior = 'auto';
     document.body.style.scrollBehavior = 'auto';
-    const reveals = [...document.querySelectorAll('.reveal')];
-    for (const el of reveals) {
-      const rect = el.getBoundingClientRect();
-      const target = Math.max(0, window.scrollY + rect.top - (innerHeight - rect.height) / 2);
-      window.scrollTo(0, target);
-      await pause(110);
-    }
     window.scrollTo(0, document.documentElement.scrollHeight);
-    await pause(180);
-    window.scrollTo(0, 0);
-    await pause(420);
   });
+  await page.waitForTimeout(180);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(360);
 
   await page.evaluate(async () => {
     const pending = [...document.images]
