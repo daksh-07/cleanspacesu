@@ -91,7 +91,7 @@ if (!fs.existsSync(path.join(publicDir, 'images', 'logo.webp'))) throw new Error
 if (components.includes('logo-white.webp') || components.includes('logo-navy.webp')) {
   throw new Error('Generated/recoloured logo variants are still referenced.');
 }
-if (!components.includes('Nothing is sent from this website')) {
+if (!components.includes('Nothing is sent automatically') && !components.includes('Nothing is sent from this website')) {
   throw new Error('Quote drawer must state that the website does not send the enquiry automatically.');
 }
 
