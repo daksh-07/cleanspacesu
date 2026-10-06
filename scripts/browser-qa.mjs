@@ -109,6 +109,18 @@ async function exerciseInteractions(page, label, route, width) {
     await page.waitForTimeout(140);
     assert(await page.locator('.quote-drawer').evaluate((el) => el.classList.contains('open')), `${label}: quote drawer did not open`);
     assert(await page.locator('.quote-drawer').getAttribute('aria-hidden') === 'false', `${label}: quote drawer aria state is wrong when open`);
+    for (let step = 0; step < 4; step += 1) {
+      const choice = page.locator('.quote-step.is-active .choice').first();
+      await choice.click();
+      await page.waitForTimeout(260);
+    }
+    await page.locator('#wizard-name').fill('Presentation Test');
+    await page.locator('#wizard-phone').fill('0400000000');
+    await page.locator('.wizard-next').click();
+    await page.waitForTimeout(140);
+    assert(await page.locator('.quote-finish').count() === 1, `${label}: quote wizard did not reach completion`);
+    assert(await page.locator('.quote-finish a').filter({ hasText: 'Text Clean Space' }).count() === 1, `${label}: quote wizard is missing SMS handoff`);
+    assert(await page.locator('.quote-finish a').filter({ hasText: 'Call 0426 379 247' }).count() === 1, `${label}: quote wizard is missing verified phone handoff`);
     await page.locator('.quote-close').click();
     await page.waitForTimeout(140);
     assert(await page.locator('.quote-drawer').getAttribute('aria-hidden') === 'true', `${label}: quote drawer aria state is wrong when closed`);
@@ -177,7 +189,11 @@ try {
     ['/services', 'services'],
     ['/work', 'work'],
     ['/about', 'about'],
-    ['/contact', 'contact']
+    ['/contact', 'contact'],
+    ['/before-after', 'before-after'],
+    ['/reviews', 'reviews'],
+    ['/faq', 'faq'],
+    ['/book', 'book']
   ];
 
   for (const [route, name] of pages) {
