@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { constants, gunzipSync } from 'node:zlib';
 
 const root = process.cwd();
@@ -48,9 +49,6 @@ function overlayRecoverableV2() {
     const payload = JSON.parse(gunzipSync(compressed).toString('utf8'));
     return writePayload(payload, 'asset-pack-v2');
   } catch (error) {
-    // The abandoned experimental branch only contains the first chunk of a
-    // larger gzip stream. Z_SYNC_FLUSH lets us recover any fully-complete
-    // entries in that chunk without treating the incomplete payload as valid.
     let partialText;
     try {
       partialText = gunzipSync(compressed, { finishFlush: constants.Z_SYNC_FLUSH }).toString('utf8');
@@ -76,11 +74,36 @@ function overlayRecoverableV2() {
   }
 }
 
+function restoreOfficialLogo() {
+  const logoDir = path.join(root, 'asset-logo');
+  if (!fs.existsSync(logoDir)) return false;
+
+  const parts = fs.readdirSync(logoDir)
+    .filter((name) => /^logo\.part\d+[a-z]?\.b64$/.test(name))
+    .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+
+  if (!parts.length) return false;
+
+  const encoded = parts.map((name) => fs.readFileSync(path.join(logoDir, name), 'utf8').trim()).join('');
+  const bytes = Buffer.from(encoded, 'base64');
+  const digest = crypto.createHash('sha256').update(bytes).digest('hex');
+  const expected = '34aa484a73e381c457a15ac05a26aa6f5a71a89b7871d0e6d8943d4557bc4d7e';
+
+  if (digest !== expected) {
+    throw new Error(`Official Clean Space logo checksum mismatch: ${digest}`);
+  }
+
+  fs.writeFileSync(path.join(outputDir, 'logo.webp'), bytes);
+  console.log(`Restored official Clean Space logo (${bytes.length} bytes, sha256 ${digest}).`);
+  return true;
+}
+
 const baseCount = unpackCompletePack('asset-pack');
 const clarityCount = overlayRecoverableV2();
+const logoRestored = restoreOfficialLogo();
 
-if (!baseCount && !clarityCount) {
+if (!baseCount && !clarityCount && !logoRestored) {
   console.log('No asset packs found; existing public/images assets are unchanged.');
 } else {
-  console.log(`Prepared ${baseCount} base image(s) with ${clarityCount} high-resolution overlay(s).`);
+  console.log(`Prepared ${baseCount} base image(s) with ${clarityCount} high-resolution overlay(s); official logo restored: ${logoRestored}.`);
 }
