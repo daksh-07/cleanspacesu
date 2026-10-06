@@ -64,6 +64,13 @@ for (const [rel, route] of pages) {
   }
 }
 
+const servicesHtml = fs.readFileSync(path.join(publicDir, 'services', 'index.html'), 'utf8');
+for (const serviceId of ['regular-home-care', 'one-off-refresh', 'kitchen-bathroom', 'finishing-touches']) {
+  if (!servicesHtml.includes(`id="${serviceId}"`)) {
+    throw new Error(`Services page is missing the ${serviceId} detail destination.`);
+  }
+}
+
 const availableImages = fs.existsSync(path.join(publicDir, 'images'))
   ? fs.readdirSync(path.join(publicDir, 'images')).filter((name) => /\.(webp|avif|jpe?g|png)$/i.test(name)).sort()
   : [];
