@@ -327,12 +327,25 @@
             <a class="secondary-action" href="tel:${PHONE_E164}">Call ${PHONE_DISPLAY}</a>
             <button type="button" class="secondary-action" data-copy-enquiry>Copy enquiry</button>
             <a class="secondary-action" href="${INSTAGRAM}" target="_blank" rel="noreferrer">Instagram ↗</a>
+            <button type="button" class="secondary-action" data-start-over>Start over</button>
           </div>
           <div class="wizard-error" data-copy-status aria-live="polite"></div>
         </div>`;
       by('[data-copy-enquiry]', stage)?.addEventListener('click', async () => {
         const ok = await copyText(message);
         by('[data-copy-status]', stage).textContent = ok ? 'Copied — ready to paste.' : 'Could not copy automatically. Use the text or call button.';
+      });
+      by('[data-start-over]', stage)?.addEventListener('click', () => {
+        Object.assign(state, {
+          step: 0,
+          service: '',
+          rhythm: '',
+          home: '',
+          timing: '',
+          name: '',
+          phone: ''
+        });
+        render();
       });
       next.hidden = true;
     };
