@@ -48,7 +48,7 @@
         <div class="quote-fallback">
           <div class="kicker">Get a tailored quote</div>
           <h2>Tell us what you need.</h2>
-          <p>The interactive quote takes a few taps. Only your name and mobile number need typing. Nothing is sent automatically.</p>
+          <p>The interactive quote takes a few taps. Only your name and mobile number need typing. Nothing is sent from this website automatically.</p>
           <a class="button dark" href="tel:+61426379247">Call 0426 379 247</a>
         </div>
       </aside>
