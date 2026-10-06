@@ -126,6 +126,19 @@ async function exerciseInteractions(page, label, route, width) {
     assert(await page.locator('.quote-drawer').getAttribute('aria-hidden') === 'true', `${label}: quote drawer aria state is wrong when closed`);
   }
 
+  if (route === '/about') {
+    const aboutProcess = await page.locator('.services .process-card').first().evaluate((card) => {
+      const heading = card.querySelector('h3');
+      const paragraph = card.querySelector('p');
+      return {
+        heading: heading ? getComputedStyle(heading).color : '',
+        paragraph: paragraph ? getComputedStyle(paragraph).color : ''
+      };
+    });
+    assert(aboutProcess.heading === 'rgb(255, 255, 255)', `${label}: About process heading contrast regressed (${aboutProcess.heading})`);
+    assert(aboutProcess.paragraph.includes('255, 255, 255'), `${label}: About process paragraph contrast regressed (${aboutProcess.paragraph})`);
+  }
+
   if (route === '/contact') {
     const contrast = await page.locator('.contact-card').evaluate((card) => {
       const heading = card.querySelector('h2');
