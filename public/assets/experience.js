@@ -314,7 +314,8 @@
 
     const renderFinish = () => {
       const message = messageText();
-      const sms = `sms:${PHONE_E164}?body=${encodeURIComponent(message)}`;
+      const smsSeparator = /iPad|iPhone|iPod/.test(navigator.userAgent) ? '&' : '?';
+      const sms = `sms:${PHONE_E164}${smsSeparator}body=${encodeURIComponent(message)}`;
       stage.innerHTML = `
         <div class="quote-step is-active quote-finish">
           <div class="finish-icon">✓</div>
@@ -413,7 +414,7 @@
   // Make the Contact page conversion-first rather than form-heavy.
   if (location.pathname.replace(/\/$/, '') === '/contact') {
     const card = by('.form-card');
-    if (card) {
+    if (card && !card.querySelector('[data-open-quote-dynamic]')) {
       card.classList.add('is-wizard-launcher');
       const launcher = document.createElement('div');
       launcher.innerHTML = `
