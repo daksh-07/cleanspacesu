@@ -1901,3 +1901,119 @@ img[src*="brand-card-melbourne"] { object-position: 50% 50%; }
 
   .ba { max-width:400px; }
 }
+
+
+/* === CLEAN SPACE ORIGINAL-PHOTOGRAPHY FINAL OVERRIDE === */
+/* Every photograph below is now built from the supplied 1179px client source.
+   These rules remove the temporary 400px safeguards and let the real work lead. */
+.brand-logo-wrap {
+  width:128px;
+  height:92px;
+  overflow:visible;
+  flex:0 0 auto;
+}
+.brand-logo,
+.brand-logo-original {
+  position:static;
+  width:100%;
+  height:100%;
+  max-width:none;
+  object-fit:contain;
+  object-position:left center;
+  transform:none!important;
+  opacity:1!important;
+}
+.site-footer .brand-logo-wrap {
+  width:158px;
+  height:128px;
+}
+.site-footer .brand-logo { width:100%; height:100%; }
+
+.ba {
+  width:100%;
+  max-width:680px;
+}
+.gallery-item {
+  flex-basis:min(68vw,520px);
+  width:min(68vw,520px);
+  max-width:520px;
+}
+.about-image {
+  width:auto;
+  max-width:none;
+}
+.about-image img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+@media (min-width:981px) {
+  .work-grid {
+    grid-template-columns:repeat(12,minmax(0,1fr));
+    max-width:none;
+    gap:16px;
+  }
+  .work-card,
+  .work-card:nth-child(n) {
+    aspect-ratio:auto;
+    min-height:430px;
+  }
+  .work-card:nth-child(6n+1),
+  .work-card:nth-child(6n+4) { grid-column:span 7; }
+  .work-card:nth-child(6n+2),
+  .work-card:nth-child(6n+3) { grid-column:span 5; }
+  .work-card:nth-child(6n+5),
+  .work-card:nth-child(6n+6) { grid-column:span 6; }
+}
+
+@media (max-width:680px) {
+  .site-header,
+  .site-header.scrolled {
+    height:96px;
+  }
+  .nav { min-height:88px; }
+  .brand-logo-wrap {
+    width:120px;
+    height:92px;
+  }
+
+  .hero { padding-top:96px; }
+  .hero-media {
+    height:min(60svh,540px);
+    min-height:410px;
+    max-height:540px;
+  }
+  .hero-grid {
+    padding-top:32px;
+  }
+
+  .stacked {
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .stacked .photo-card {
+    aspect-ratio:4/5;
+  }
+
+  .gallery-item {
+    flex-basis:84vw;
+    width:84vw;
+    max-width:380px;
+  }
+
+  .ba {
+    max-width:none;
+  }
+
+  .about-image {
+    width:100%;
+    max-width:none;
+    aspect-ratio:4/5;
+  }
+  .about-image img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+}
