@@ -14,7 +14,7 @@
           <a href="/work" ${path==='/work'?'aria-current="page"':''}>Our work</a>
           <a href="/about" ${path==='/about'?'aria-current="page"':''}>About</a>
           <a href="/contact" ${path==='/contact'?'aria-current="page"':''}>Contact</a>
-          <button class="button nav-cta" data-open-quote>Request a clean</button>
+          <button class="button nav-cta" data-open-quote>Get a quote</button>
         </div>
         <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav-links"><span></span><span></span><span></span></button>
       </nav>
@@ -33,7 +33,7 @@
             <p>Thoughtful home cleaning across Melbourne. Real work, carefully finished — so your home feels lighter the moment you walk in.</p>
           </div>
           <div class="footer-col"><h4>Explore</h4><a href="/services">Services</a><a href="/work">Our work</a><a href="/about">About</a></div>
-          <div class="footer-col"><h4>Enquire</h4><a href="/contact">Request a clean</a><a href="https://www.instagram.com/cleanspaceau/" target="_blank" rel="noreferrer">Instagram</a></div>
+          <div class="footer-col"><h4>Enquire</h4><a href="/contact">Get a quote</a><a href="https://www.instagram.com/cleanspaceau/" target="_blank" rel="noreferrer">Instagram</a></div>
           <div class="footer-col"><h4>Location</h4><a href="/contact">Melbourne, Victoria</a></div>
         </div>
         <div class="footer-bottom"><span>© ${new Date().getFullYear()} Clean Space.</span><span>Let us do the magic.</span></div>
@@ -43,7 +43,7 @@
   const drawer = `
     <div class="quote-drawer" aria-hidden="true">
       <div class="quote-backdrop"></div>
-      <aside class="quote-panel" role="dialog" aria-modal="true" aria-label="Request a Clean Space quote">
+      <aside class="quote-panel" role="dialog" aria-modal="true" aria-label="Get a Clean Space quote">
         <button class="quote-close" aria-label="Close quote form">×</button>
         <div class="kicker">A cleaner home starts here</div>
         <h2>Tell us about your space.</h2>
@@ -62,6 +62,6 @@
     </div>`;
 
   document.querySelector('[data-site-nav]')?.insertAdjacentHTML('afterbegin', nav);
-  const mobileCta = `<button class="mobile-sticky-cta" data-open-quote aria-label="Request a Clean Space clean"><span>Request a clean</span><span aria-hidden="true">→</span></button>`;
+  const mobileCta = `<button class="mobile-sticky-cta" data-open-quote aria-label="Get a Clean Space quote"><span>Get a quote</span><span aria-hidden="true">→</span></button>`;
   document.querySelector('[data-site-footer]')?.insertAdjacentHTML('beforeend', footer + drawer + mobileCta);
 })();
