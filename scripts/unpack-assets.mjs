@@ -8,14 +8,33 @@ const outputDir = path.join(root, 'public', 'images');
 
 fs.mkdirSync(outputDir, { recursive: true });
 
-function writePayload(payload, source) {
+function writePayload(payload, source, { preserveLargerExisting = false } = {}) {
   let count = 0;
+  let preserved = 0;
+
   for (const [filename, base64] of Object.entries(payload)) {
     if (!/^[a-z0-9-]+\.webp$/i.test(filename)) throw new Error(`Unsafe asset filename: ${filename}`);
-    fs.writeFileSync(path.join(outputDir, filename), Buffer.from(base64, 'base64'));
+
+    const target = path.join(outputDir, filename);
+    const bytes = Buffer.from(base64, 'base64');
+
+    // Production now commits the real 1179px client photography directly.
+    // Never let the legacy 400px compatibility pack overwrite a larger,
+    // sharper client original during npm run build.
+    if (preserveLargerExisting && fs.existsSync(target)) {
+      const existingSize = fs.statSync(target).size;
+      if (existingSize > bytes.length * 1.15) {
+        preserved += 1;
+        continue;
+      }
+    }
+
+    fs.writeFileSync(target, bytes);
     count += 1;
   }
+
   if (count) console.log(`Unpacked ${count} image(s) from ${source}.`);
+  if (preserved) console.log(`Preserved ${preserved} larger committed client image(s) over ${source}.`);
   return count;
 }
 
@@ -31,12 +50,12 @@ function readPackParts(dirName) {
   return parts.map((name) => fs.readFileSync(path.join(packDir, name), 'utf8').trim()).join('');
 }
 
-function unpackCompletePack(dirName) {
+function unpackCompletePack(dirName, options = {}) {
   const encoded = readPackParts(dirName);
   if (!encoded) return 0;
 
   const payload = JSON.parse(gunzipSync(Buffer.from(encoded, 'base64')).toString('utf8'));
-  return writePayload(payload, dirName);
+  return writePayload(payload, dirName, options);
 }
 
 function overlayRecoverableV2() {
@@ -47,7 +66,7 @@ function overlayRecoverableV2() {
 
   try {
     const payload = JSON.parse(gunzipSync(compressed).toString('utf8'));
-    return writePayload(payload, 'asset-pack-v2');
+    return writePayload(payload, 'asset-pack-v2', { preserveLargerExisting: true });
   } catch (error) {
     let partialText;
     try {
@@ -68,7 +87,7 @@ function overlayRecoverableV2() {
       return 0;
     }
 
-    const count = writePayload(recovered, 'recoverable asset-pack-v2 entries');
+    const count = writePayload(recovered, 'recoverable asset-pack-v2 entries', { preserveLargerExisting: true });
     console.warn(`asset-pack-v2 is intentionally partial; recovered ${count} complete image(s) and ignored the truncated remainder.`);
     return count;
   }
@@ -98,7 +117,7 @@ function restoreOfficialLogo() {
   return true;
 }
 
-const baseCount = unpackCompletePack('asset-pack');
+const baseCount = unpackCompletePack('asset-pack', { preserveLargerExisting: true });
 const clarityCount = overlayRecoverableV2();
 const logoRestored = restoreOfficialLogo();
 

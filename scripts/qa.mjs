@@ -14,8 +14,8 @@ const pages = [
 ];
 
 const requiredAssets = [
-  'living-room-detail.webp',
-  'kitchen-floor.webp',
+  'living-room-premium.webp',
+  'kitchen-floor-premium.webp',
   'bathroom-detail.webp',
   'carpet-detail.webp',
   'drain-before.webp',
@@ -25,8 +25,11 @@ const requiredAssets = [
   'sink-before.webp',
   'sink-after.webp',
   'brand-card-melbourne.webp',
-  'logo.webp'
+  'logo.webp',
+  'logo-header.webp'
 ];
+
+const clientPhotoAssets = requiredAssets.filter((name) => !name.startsWith('logo'));
 
 for (const [rel, route] of pages) {
   const filePath = path.join(publicDir, rel);
@@ -61,7 +64,11 @@ const availableImages = fs.existsSync(path.join(publicDir, 'images'))
 for (const name of requiredAssets) {
   const filePath = path.join(publicDir, 'images', name);
   if (!fs.existsSync(filePath)) throw new Error(`Missing image: ${name}. Available built images: ${availableImages.join(', ')}`);
-  if (fs.statSync(filePath).size < 1000) throw new Error(`Image looks invalid: ${name}`);
+  const size = fs.statSync(filePath).size;
+  if (size < 1000) throw new Error(`Image looks invalid: ${name}`);
+  if (clientPhotoAssets.includes(name) && size < 90000) {
+    throw new Error(`Client photo is still a low-resolution derivative: ${name} (${size} bytes)`);
+  }
 }
 
 const allHtml = pages.map(([rel]) => fs.readFileSync(path.join(publicDir, rel), 'utf8')).join('\n');
@@ -72,7 +79,8 @@ for (const ref of new Set(imageRefs)) {
 }
 
 const components = fs.readFileSync(path.join(publicDir, 'assets', 'components.js'), 'utf8');
-if (!components.includes('/images/logo.webp')) throw new Error('Official logo asset is not used by shared navigation/footer.');
+if (!components.includes('/images/logo-header.webp')) throw new Error('Exact cropped client logo artwork is not used by shared navigation/footer.');
+if (!fs.existsSync(path.join(publicDir, 'images', 'logo.webp'))) throw new Error('Full official logo asset is missing.');
 if (components.includes('logo-white.webp') || components.includes('logo-navy.webp')) {
   throw new Error('Generated/recoloured logo variants are still referenced.');
 }
@@ -90,5 +98,5 @@ const robots = fs.readFileSync(path.join(publicDir, 'robots.txt'), 'utf8');
 if (!robots.includes(`Sitemap: ${origin}/sitemap.xml`)) throw new Error('robots.txt is missing sitemap discovery.');
 
 console.log(
-  `QA passed: ${pages.length} pages, ${requiredAssets.length} required images, ${new Set(imageRefs).size} referenced image assets, exact logo reference, canonical/OG shell and honest enquiry copy.`
+  `QA passed: ${pages.length} pages, ${requiredAssets.length} required images, ${new Set(imageRefs).size} referenced image assets, exact logo artwork, full-resolution client photography, canonical/OG shell and honest enquiry copy.`
 );
