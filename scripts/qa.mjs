@@ -10,7 +10,11 @@ const pages = [
   ['services/index.html', '/services'],
   ['work/index.html', '/work'],
   ['about/index.html', '/about'],
-  ['contact/index.html', '/contact']
+  ['contact/index.html', '/contact'],
+  ['before-after/index.html', '/before-after'],
+  ['reviews/index.html', '/reviews'],
+  ['faq/index.html', '/faq'],
+  ['book/index.html', '/book']
 ];
 
 const requiredAssets = [
@@ -41,6 +45,9 @@ for (const [rel, route] of pages) {
   }
   if (!html.includes('assets/styles.css') || !html.includes('assets/site.js')) {
     throw new Error(`Missing core assets: ${rel}`);
+  }
+  if (!html.includes('assets/experience.css') || !html.includes('assets/experience.js')) {
+    throw new Error(`Missing client-direction experience layer: ${rel}`);
   }
 
   const canonical = route === '/' ? `${origin}/` : `${origin}${route}`;
