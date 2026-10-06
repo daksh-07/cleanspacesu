@@ -1932,3 +1932,23 @@ img[src*="brand-card-melbourne"] { object-position: 50% 50%; }
   .hero-title { font-size:3rem; }
   .proof-grid .stacked { grid-template-columns:1fr 1fr; }
 }
+
+
+/* Exact logo visibility correction — show the full supplied artwork, never crop it. */
+.brand-logo-wrap {
+  width: 112px;
+  height: 80px;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+}
+.brand-logo {
+  position: static;
+  width: 106px;
+  height: auto;
+  max-width: none;
+  transform: none;
+}
+@media (max-width: 980px) {
+  .hero-brand-stamp { display:none !important; }
+}
