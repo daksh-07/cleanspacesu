@@ -358,6 +358,28 @@ body::before{
   border-right-color:rgba(255,255,255,.18)!important;
 }
 
+/* A little colour variety without turning the service page into a template. */
+.service-details .detail-list{
+  position:relative;
+  padding:34px 28px 30px;
+  margin-top:12px;
+  border-top:0!important;
+  border-radius:22px 0 22px 0;
+  overflow:hidden;
+}
+.service-details .detail-list::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  opacity:.62;
+}
+.service-details .detail-list:nth-of-type(1)::before{background:linear-gradient(115deg,rgba(200,220,235,.42),rgba(255,255,255,.78))}
+.service-details .detail-list:nth-of-type(2)::before{background:linear-gradient(115deg,rgba(231,215,212,.48),rgba(255,255,255,.8))}
+.service-details .detail-list:nth-of-type(3)::before{background:linear-gradient(115deg,rgba(216,190,161,.36),rgba(255,255,255,.82))}
+.service-details .detail-list:nth-of-type(4)::before{background:linear-gradient(115deg,rgba(175,187,177,.34),rgba(255,255,255,.8))}
+.service-details .detail-list li::before{color:var(--cs-navy)!important}
+
 /* Before/after = flagship proof */
 .before-after-section{
   background:
