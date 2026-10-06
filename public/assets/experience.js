@@ -447,8 +447,5 @@
     openQuote();
   });
 
-  // /book is the cleanest route into the wizard.
-  if (location.pathname.replace(/\/$/, '') === '/book') {
-    setTimeout(openQuote, reducedMotion ? 50 : 480);
-  }
+  // /book keeps a visible start button instead of forcing the drawer open.
 })();
