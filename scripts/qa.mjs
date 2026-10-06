@@ -81,12 +81,22 @@ for (const name of requiredAssets) {
 const allHtml = pages.map(([rel]) => fs.readFileSync(path.join(publicDir, rel), 'utf8')).join('\n');
 const imageRefs = [...allHtml.matchAll(/\/images\/([a-z0-9-]+\.webp)/gi)].map((match) => match[1]);
 
+if (/AUD\s*\$?\s*\d|\$\s*\d/.test(allHtml)) {
+  throw new Error('Public pricing detected. Clean Space must stay quote-led with no public prices.');
+}
+if (/Sydney/i.test(allHtml)) {
+  throw new Error('Unverified Sydney location copy detected. Clean Space site is Melbourne-only.');
+}
+
 for (const ref of new Set(imageRefs)) {
   if (!fs.existsSync(path.join(publicDir, 'images', ref))) throw new Error(`Broken image reference: ${ref}`);
 }
 
 const components = fs.readFileSync(path.join(publicDir, 'assets', 'components.js'), 'utf8');
 if (!components.includes('/images/logo-header.webp')) throw new Error('Exact cropped client logo artwork is not used by shared navigation/footer.');
+if (!components.includes('0426 379 247') || !components.includes('tel:+61426379247')) {
+  throw new Error('Verified Clean Space phone is missing from the shared conversion shell.');
+}
 if (!fs.existsSync(path.join(publicDir, 'images', 'logo.webp'))) throw new Error('Full official logo asset is missing.');
 if (components.includes('logo-white.webp') || components.includes('logo-navy.webp')) {
   throw new Error('Generated/recoloured logo variants are still referenced.');
