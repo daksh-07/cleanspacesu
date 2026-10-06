@@ -108,16 +108,32 @@ body::before{
   backdrop-filter:blur(22px) saturate(135%);
   transform:translateY(4px);
 }
-.brand-logo-wrap{
-  width:120px!important;height:68px!important;overflow:visible!important;
-  background:transparent!important;
+.site-header .brand-logo-wrap{
+  width:92px!important;height:52px!important;
+  display:grid!important;place-items:center!important;
+  overflow:hidden!important;
+  padding:5px!important;
+  border-radius:14px!important;
+  background:#0b2150!important;
+  box-shadow:0 8px 24px rgba(6,22,51,.16)!important;
+  flex:0 0 auto!important;
 }
-.brand-logo{
-  width:100%!important;height:100%!important;object-fit:contain!important;
-  object-position:left center!important;background:transparent!important;
-  filter:drop-shadow(0 2px 10px rgba(0,0,0,.16));
+.site-header .brand-logo{
+  width:100%!important;height:100%!important;
+  object-fit:contain!important;object-position:center!important;
+  background:transparent!important;filter:none!important;
 }
-.site-header.scrolled .brand-logo{filter:none}
+.site-header.scrolled .brand-logo-wrap{
+  box-shadow:0 6px 18px rgba(6,22,51,.10)!important;
+}
+.site-footer .brand-logo-wrap{
+  width:150px!important;height:110px!important;
+  overflow:visible!important;background:transparent!important;padding:0!important;box-shadow:none!important;
+}
+.site-footer .brand-logo{
+  width:100%!important;height:100%!important;object-fit:contain!important;object-position:left center!important;
+  background:transparent!important;filter:none!important;
+}
 .nav-links{gap:22px}
 .nav-links a:not(.nav-cta){
   position:relative;font-weight:650;letter-spacing:-.015em;
@@ -751,7 +767,10 @@ body::before{
   .site-header.scrolled .nav{
     background:rgba(251,248,241,.9)!important;border-color:rgba(11,33,80,.08)!important;
   }
-  .brand-logo-wrap{width:104px!important;height:58px!important}
+  .site-header .brand-logo-wrap{
+    width:76px!important;height:48px!important;padding:4px!important;
+    border-radius:12px!important;
+  }
   .menu-btn{width:44px!important;height:44px!important;border-radius:14px!important}
   body.menu-open .nav{background:transparent!important;border-color:transparent!important;backdrop-filter:none!important}
   .nav-links{padding:max(112px,calc(86px + env(safe-area-inset-top))) 20px 36px!important}
