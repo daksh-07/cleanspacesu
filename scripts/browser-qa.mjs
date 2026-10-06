@@ -49,6 +49,34 @@ async function settlePage(page) {
     ]);
   });
   await page.waitForTimeout(250);
+
+  // WebKit can deliver an IntersectionObserver callback a frame or two after
+  // a programmatic scroll has settled. Retry only unresolved, currently
+  // renderable reveals so the gate still catches genuine hidden content while
+  // avoiding a timing-only false negative on the first mobile viewport.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const unresolved = await page.locator('.reveal:not(.is-visible)').evaluateAll((elements) =>
+      elements
+        .filter((el) => {
+          const style = getComputedStyle(el);
+          return style.display !== 'none' && style.visibility !== 'hidden';
+        })
+        .map((el) => {
+          const rect = el.getBoundingClientRect();
+          return window.scrollY + rect.top;
+        })
+    );
+
+    if (!unresolved.length) break;
+    for (const top of unresolved) {
+      await page.evaluate((y) => window.scrollTo(0, Math.max(0, y - innerHeight * .42)), top);
+      await page.waitForTimeout(180);
+    }
+    await page.waitForTimeout(220);
+  }
+
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(180);
 }
 
 async function exerciseInteractions(page, label, route, width) {
