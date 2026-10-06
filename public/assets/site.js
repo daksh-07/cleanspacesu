@@ -59,7 +59,11 @@
     drawer.setAttribute('aria-hidden', 'true');
     body.classList.remove('quote-open');
     syncLock();
-    lastFocus?.focus?.();
+    try {
+      lastFocus?.focus?.({ preventScroll: true });
+    } catch (_) {
+      lastFocus?.focus?.();
+    }
   };
 
   document.querySelectorAll('[data-open-quote]').forEach((button) => button.addEventListener('click', openDrawer));
