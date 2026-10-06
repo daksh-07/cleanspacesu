@@ -38,6 +38,10 @@ jobs:
           test -f public/work/index.html
           test -f public/about/index.html
           test -f public/contact/index.html
+          test -f public/before-after/index.html
+          test -f public/reviews/index.html
+          test -f public/faq/index.html
+          test -f public/book/index.html
           test "$(find public/images -type f -name '*.webp' | wc -l)" -ge 12
 
       - name: Install browser QA runtime
