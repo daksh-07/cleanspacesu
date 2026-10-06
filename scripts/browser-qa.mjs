@@ -109,9 +109,54 @@ async function exerciseInteractions(page, label, route, width) {
     await page.waitForTimeout(140);
     assert(await page.locator('.quote-drawer').evaluate((el) => el.classList.contains('open')), `${label}: quote drawer did not open`);
     assert(await page.locator('.quote-drawer').getAttribute('aria-hidden') === 'false', `${label}: quote drawer aria state is wrong when open`);
+    for (let step = 0; step < 4; step += 1) {
+      const choice = page.locator('.quote-step.is-active .choice').first();
+      await choice.click();
+      await page.waitForTimeout(260);
+    }
+    await page.locator('#wizard-name').fill('Presentation Test');
+    await page.locator('#wizard-phone').fill('0400000000');
+    await page.locator('.wizard-next').click();
+    await page.waitForTimeout(140);
+    assert(await page.locator('.quote-finish').count() === 1, `${label}: quote wizard did not reach completion`);
+    assert(await page.locator('.quote-finish a').filter({ hasText: 'Text Clean Space' }).count() === 1, `${label}: quote wizard is missing SMS handoff`);
+    assert(await page.locator('.quote-finish a').filter({ hasText: 'Call 0426 379 247' }).count() === 1, `${label}: quote wizard is missing verified phone handoff`);
+    assert(await page.locator('[data-start-over]').count() === 1, `${label}: quote wizard is not repeatable`);
+    await page.locator('[data-start-over]').click();
+    await page.waitForTimeout(120);
+    assert(await page.locator('.quote-step.is-active .choice').count() === 4, `${label}: quote wizard start-over did not reset to choices`);
     await page.locator('.quote-close').click();
     await page.waitForTimeout(140);
     assert(await page.locator('.quote-drawer').getAttribute('aria-hidden') === 'true', `${label}: quote drawer aria state is wrong when closed`);
+  }
+
+  if (route === '/about') {
+    const aboutProcess = await page.locator('.services .process-card').first().evaluate((card) => {
+      const heading = card.querySelector('h3');
+      const paragraph = card.querySelector('p');
+      return {
+        heading: heading ? getComputedStyle(heading).color : '',
+        paragraph: paragraph ? getComputedStyle(paragraph).color : ''
+      };
+    });
+    assert(aboutProcess.heading === 'rgb(255, 255, 255)', `${label}: About process heading contrast regressed (${aboutProcess.heading})`);
+    assert(aboutProcess.paragraph.includes('255, 255, 255'), `${label}: About process paragraph contrast regressed (${aboutProcess.paragraph})`);
+  }
+
+  if (route === '/contact') {
+    const contrast = await page.locator('.contact-card').evaluate((card) => {
+      const heading = card.querySelector('h2');
+      const paragraph = card.querySelector('p');
+      const link = card.querySelector('.contact-link');
+      return {
+        heading: heading ? getComputedStyle(heading).color : '',
+        paragraph: paragraph ? getComputedStyle(paragraph).color : '',
+        link: link ? getComputedStyle(link).color : ''
+      };
+    });
+    assert(contrast.heading === 'rgb(255, 255, 255)', `${label}: contact card heading contrast regressed (${contrast.heading})`);
+    assert(contrast.link === 'rgb(255, 255, 255)', `${label}: contact card link contrast regressed (${contrast.link})`);
+    assert(contrast.paragraph.includes('255, 255, 255'), `${label}: contact card paragraph contrast regressed (${contrast.paragraph})`);
   }
 
   const slider = page.locator('.ba input[type="range"]').first();
@@ -177,7 +222,11 @@ try {
     ['/services', 'services'],
     ['/work', 'work'],
     ['/about', 'about'],
-    ['/contact', 'contact']
+    ['/contact', 'contact'],
+    ['/before-after', 'before-after'],
+    ['/reviews', 'reviews'],
+    ['/faq', 'faq'],
+    ['/book', 'book']
   ];
 
   for (const [route, name] of pages) {

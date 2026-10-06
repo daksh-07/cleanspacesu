@@ -10,7 +10,11 @@ const pages = [
   ['services/index.html', '/services'],
   ['work/index.html', '/work'],
   ['about/index.html', '/about'],
-  ['contact/index.html', '/contact']
+  ['contact/index.html', '/contact'],
+  ['before-after/index.html', '/before-after'],
+  ['reviews/index.html', '/reviews'],
+  ['faq/index.html', '/faq'],
+  ['book/index.html', '/book']
 ];
 
 const requiredAssets = [
@@ -42,6 +46,9 @@ for (const [rel, route] of pages) {
   if (!html.includes('assets/styles.css') || !html.includes('assets/site.js')) {
     throw new Error(`Missing core assets: ${rel}`);
   }
+  if (!html.includes('assets/experience.css') || !html.includes('assets/experience.js')) {
+    throw new Error(`Missing client-direction experience layer: ${rel}`);
+  }
 
   const canonical = route === '/' ? `${origin}/` : `${origin}${route}`;
   if (!html.includes(`rel="canonical" href="${canonical}"`)) {
@@ -54,6 +61,13 @@ for (const [rel, route] of pages) {
 
   for (const match of html.matchAll(/<img\b[^>]*>/gi)) {
     if (!/\balt="[^"]*"/i.test(match[0])) throw new Error(`Image missing alt attribute in ${rel}: ${match[0]}`);
+  }
+}
+
+const servicesHtml = fs.readFileSync(path.join(publicDir, 'services', 'index.html'), 'utf8');
+for (const serviceId of ['regular-home-care', 'one-off-refresh', 'kitchen-bathroom', 'finishing-touches']) {
+  if (!servicesHtml.includes(`id="${serviceId}"`)) {
+    throw new Error(`Services page is missing the ${serviceId} detail destination.`);
   }
 }
 
@@ -74,17 +88,27 @@ for (const name of requiredAssets) {
 const allHtml = pages.map(([rel]) => fs.readFileSync(path.join(publicDir, rel), 'utf8')).join('\n');
 const imageRefs = [...allHtml.matchAll(/\/images\/([a-z0-9-]+\.webp)/gi)].map((match) => match[1]);
 
+if (/AUD\s*\$?\s*\d|\$\s*\d/.test(allHtml)) {
+  throw new Error('Public pricing detected. Clean Space must stay quote-led with no public prices.');
+}
+if (/Sydney/i.test(allHtml)) {
+  throw new Error('Unverified Sydney location copy detected. Clean Space site is Melbourne-only.');
+}
+
 for (const ref of new Set(imageRefs)) {
   if (!fs.existsSync(path.join(publicDir, 'images', ref))) throw new Error(`Broken image reference: ${ref}`);
 }
 
 const components = fs.readFileSync(path.join(publicDir, 'assets', 'components.js'), 'utf8');
 if (!components.includes('/images/logo-header.webp')) throw new Error('Exact cropped client logo artwork is not used by shared navigation/footer.');
+if (!components.includes('0426 379 247') || !components.includes('tel:+61426379247')) {
+  throw new Error('Verified Clean Space phone is missing from the shared conversion shell.');
+}
 if (!fs.existsSync(path.join(publicDir, 'images', 'logo.webp'))) throw new Error('Full official logo asset is missing.');
 if (components.includes('logo-white.webp') || components.includes('logo-navy.webp')) {
   throw new Error('Generated/recoloured logo variants are still referenced.');
 }
-if (!components.includes('Nothing is sent from this website')) {
+if (!components.includes('Nothing is sent automatically') && !components.includes('Nothing is sent from this website')) {
   throw new Error('Quote drawer must state that the website does not send the enquiry automatically.');
 }
 
@@ -98,5 +122,5 @@ const robots = fs.readFileSync(path.join(publicDir, 'robots.txt'), 'utf8');
 if (!robots.includes(`Sitemap: ${origin}/sitemap.xml`)) throw new Error('robots.txt is missing sitemap discovery.');
 
 console.log(
-  `QA passed: ${pages.length} pages, ${requiredAssets.length} required images, ${new Set(imageRefs).size} referenced image assets, exact logo artwork, full-resolution client photography, canonical/OG shell and honest enquiry copy.`
+  `QA passed: ${pages.length} pages, ${requiredAssets.length} required images, ${new Set(imageRefs).size} referenced image assets, exact logo artwork, full-resolution client photography, canonical/OG shell, verified phone and choice-led quote flow.`
 );
