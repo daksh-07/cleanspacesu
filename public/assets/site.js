@@ -242,6 +242,14 @@
     success.classList.add('show');
   };
 
+  const requestedService = new URLSearchParams(location.search).get('service');
+  if (requestedService) {
+    document.querySelectorAll('[data-enquiry-form] select[name="service"]').forEach((select) => {
+      const option = [...select.options].find((item) => item.value === requestedService || item.textContent.trim() === requestedService);
+      if (option) select.value = option.value;
+    });
+  }
+
   document.querySelectorAll('[data-enquiry-form]').forEach((form) => {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
