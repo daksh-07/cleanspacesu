@@ -340,6 +340,24 @@ body::before{
   color:white;border-color:rgba(255,255,255,.34)!important;border-radius:14px!important;
 }
 
+/* About page uses the shared process cards inside a dark services band. */
+.services .process-card h3{
+  color:white!important;
+}
+.services .process-card p{
+  color:rgba(255,255,255,.72)!important;
+}
+.services .process-card .process-num{
+  color:var(--cs-champagne)!important;
+}
+.services .process-card{
+  border-bottom-color:rgba(255,255,255,.18)!important;
+}
+.services .process-card:nth-child(2){
+  border-left-color:rgba(255,255,255,.18)!important;
+  border-right-color:rgba(255,255,255,.18)!important;
+}
+
 /* Before/after = flagship proof */
 .before-after-section{
   background:
