@@ -126,6 +126,22 @@ async function exerciseInteractions(page, label, route, width) {
     assert(await page.locator('.quote-drawer').getAttribute('aria-hidden') === 'true', `${label}: quote drawer aria state is wrong when closed`);
   }
 
+  if (route === '/contact') {
+    const contrast = await page.locator('.contact-card').evaluate((card) => {
+      const heading = card.querySelector('h2');
+      const paragraph = card.querySelector('p');
+      const link = card.querySelector('.contact-link');
+      return {
+        heading: heading ? getComputedStyle(heading).color : '',
+        paragraph: paragraph ? getComputedStyle(paragraph).color : '',
+        link: link ? getComputedStyle(link).color : ''
+      };
+    });
+    assert(contrast.heading === 'rgb(255, 255, 255)', `${label}: contact card heading contrast regressed (${contrast.heading})`);
+    assert(contrast.link === 'rgb(255, 255, 255)', `${label}: contact card link contrast regressed (${contrast.link})`);
+    assert(contrast.paragraph.includes('255, 255, 255'), `${label}: contact card paragraph contrast regressed (${contrast.paragraph})`);
+  }
+
   const slider = page.locator('.ba input[type="range"]').first();
   if (await slider.count()) {
     await slider.evaluate((input) => {
