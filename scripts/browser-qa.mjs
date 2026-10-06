@@ -123,6 +123,34 @@ async function exerciseInteractions(page, label, route, width) {
     const position = await page.locator('.ba').first().evaluate((el) => el.style.getPropertyValue('--position').trim());
     assert(position === '71%', `${label}: before/after slider did not update (got "${position}")`);
   }
+
+  if ((route === '/' || route === '/services') && width === 390) {
+    const service = page.locator('.service[href]').first();
+    assert(await service.count() === 1, `${label}: first service choice is not a real link`);
+    if (await service.count()) {
+      await service.scrollIntoViewIfNeeded();
+      await Promise.all([
+        page.waitForURL(/\/contact\?service=/),
+        service.click()
+      ]);
+      assert(page.url().includes('/contact?service='), `${label}: tapping a service did not navigate to a service enquiry`);
+      await page.goBack({ waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(180);
+    }
+  }
+
+  if (route === '/' && width === 390) {
+    const menu = page.locator('.menu-btn');
+    await menu.click();
+    const servicesLink = page.locator('.nav-links a[href="/services"]').first();
+    await Promise.all([
+      page.waitForURL(/\/services\/?$/),
+      servicesLink.click()
+    ]);
+    assert(/\/services\/?$/.test(new URL(page.url()).pathname), `${label}: Services navigation did not open the services page`);
+    await page.goBack({ waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(180);
+  }
 }
 
 async function auditPage(browser, engineName, route, width, height, filename) {
