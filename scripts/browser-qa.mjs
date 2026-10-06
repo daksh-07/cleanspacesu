@@ -105,8 +105,9 @@ async function auditPage(browser, engineName, route, width, height, filename) {
   const response = await page.goto(`${base}${route}`, { waitUntil: 'domcontentloaded' });
   assert(response?.ok(), `${label}: route returned HTTP ${response?.status()}`);
 
-  await exerciseInteractions(page, label, route, width);
   await settlePage(page);
+  await exerciseInteractions(page, label, route, width);
+  await page.waitForTimeout(180);
 
   const audit = await page.evaluate(() => ({
     scrollWidth: document.documentElement.scrollWidth,
