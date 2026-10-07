@@ -104,6 +104,33 @@ async function exerciseInteractions(page, label, route, width) {
   }
 
   if (route === '/' && width === 390) {
+    const serviceTargets = [
+      '/services#regular-home-care',
+      '/services#one-off-refresh',
+      '/services#kitchen-bathroom',
+      '/services#finishing-touches'
+    ];
+
+    for (const target of serviceTargets) {
+      await page.goto(`${base}/`, { waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(360);
+      const link = page.locator(`a.service-link[href="${target}"]`).first();
+      assert(await link.count() === 1, `${label}: missing service link ${target}`);
+      if (await link.count()) {
+        await Promise.all([
+          page.waitForURL((url) => url.pathname === '/services' && url.hash === target.split('#')[1].replace(/^/, '#')),
+          link.click()
+        ]);
+        assert(
+          new URL(page.url()).pathname === '/services' && new URL(page.url()).hash === target.slice(target.indexOf('#')),
+          `${label}: service click did not navigate to ${target}; got ${page.url()}`
+        );
+      }
+    }
+
+    await page.goto(`${base}/`, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(360);
+
     const opener = page.locator('[data-open-quote]').first();
     await opener.click();
     await page.waitForTimeout(140);
@@ -194,11 +221,15 @@ async function auditPage(browser, engineName, route, width, height, filename) {
     brokenImages: [...document.images]
       .filter((img) => !img.complete || img.naturalWidth === 0)
       .map((img) => img.getAttribute('src') || img.currentSrc || 'unknown'),
-    title: document.title
+    title: document.title,
+    headlineFont: getComputedStyle(document.querySelector('.hero h1, .page-hero h1, h1')).fontFamily,
+    instrumentSerifReady: document.fonts ? document.fonts.check('16px "Instrument Serif"') : true
   }));
 
   assert(audit.scrollWidth <= audit.innerWidth + 1, `${label}: horizontal overflow ${audit.scrollWidth}px > ${audit.innerWidth}px`);
   assert(audit.unrevealed === 0, `${label}: ${audit.unrevealed} reveal elements never became visible`);
+  assert(audit.headlineFont.includes('Instrument Serif'), `${label}: editorial display font is not applied (got ${audit.headlineFont})`);
+  assert(audit.instrumentSerifReady, `${label}: Instrument Serif did not load through document.fonts`);
   if (audit.brokenImages.length) {
     failures.push(`${label}: broken images: ${[...new Set(audit.brokenImages)].join(', ')}`);
   }
@@ -209,7 +240,7 @@ async function auditPage(browser, engineName, route, width, height, filename) {
   });
   await page.screenshot({ path: `${outDir}/${filename}`, fullPage: true });
 
-  reports.push(`${label}: route OK; overflow ${audit.scrollWidth - audit.innerWidth}px; unrevealed ${audit.unrevealed}; broken images ${audit.brokenImages.length}`);
+  reports.push(`${label}: route OK; overflow ${audit.scrollWidth - audit.innerWidth}px; unrevealed ${audit.unrevealed}; broken images ${audit.brokenImages.length}; font ${audit.headlineFont}`);
   await context.close();
 }
 

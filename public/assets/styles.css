@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap');9..144,400;9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
   --ink: #0d1b2a;
@@ -2015,5 +2015,774 @@ img[src*="brand-card-melbourne"] { object-position: 50% 50%; }
     width:100%;
     height:100%;
     object-fit:cover;
+  }
+}
+
+
+/* === CLEAN SPACE WOW MOTION PASS === */
+:root {
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --ease-out-expo: cubic-bezier(.16, 1, .3, 1);
+  --ease-silk: cubic-bezier(.22, .8, .2, 1);
+  --duration-fast: 220ms;
+  --duration-medium: 620ms;
+  --duration-slow: 1050ms;
+  --editorial-rule: rgba(13, 27, 42, .16);
+}
+
+/* Typography becomes the visual identity rather than a utility layer. */
+.hero h1,
+.page-hero h1,
+.section-head h2,
+.before-after-copy h2,
+.quote p,
+.cta-band h2,
+.about-copy h2,
+.contact-card h2,
+.form-card h2,
+.quote-panel h2,
+.service h3,
+.process-card h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-kerning: normal;
+  text-wrap: balance;
+}
+
+.hero h1 {
+  letter-spacing: -.065em;
+  line-height: .87;
+}
+.hero h1 em {
+  letter-spacing: -.045em;
+}
+.section-head h2,
+.before-after-copy h2,
+.cta-band h2,
+.about-copy h2 {
+  letter-spacing: -.055em;
+}
+body {
+  letter-spacing: -.012em;
+}
+.eyebrow,
+.kicker,
+.service-index,
+.nav-links,
+.button,
+.gallery-item small,
+.ba-label {
+  letter-spacing: .02em;
+}
+
+/* Global editorial detailing */
+main {
+  position: relative;
+}
+.section {
+  position: relative;
+  isolation: isolate;
+}
+.section[data-section-index]::before {
+  content: attr(data-section-index);
+  position: absolute;
+  top: 26px;
+  left: max(18px, calc((100vw - 1180px) / 2));
+  font: 700 .66rem/1 var(--sans);
+  letter-spacing: .18em;
+  color: rgba(13,27,42,.34);
+  z-index: -1;
+}
+.before-after-section[data-section-index]::before {
+  color: rgba(255,255,255,.35);
+}
+.section[data-section-index]::after {
+  content: "";
+  position: absolute;
+  top: 42px;
+  left: max(58px, calc((100vw - 1100px) / 2));
+  width: min(120px, 11vw);
+  height: 1px;
+  background: currentColor;
+  opacity: .12;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform var(--duration-slow) var(--ease-out-expo);
+}
+.section.wow-visible::after {
+  transform: scaleX(1);
+}
+
+/* Header and navigation */
+.site-header {
+  --nav-rule: rgba(255,255,255,.16);
+}
+.site-header.scrolled {
+  --nav-rule: rgba(13,27,42,.13);
+}
+.nav-links a:not(.nav-cta) {
+  position: relative;
+  padding: 12px 0;
+  transition: opacity var(--duration-fast), transform var(--duration-fast) var(--ease-out-expo);
+}
+.nav-links a:not(.nav-cta)::after {
+  content: "";
+  position: absolute;
+  height: 1px;
+  left: 0;
+  right: 0;
+  bottom: 5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 380ms var(--ease-out-expo);
+  opacity: .8;
+}
+.nav-links a:not(.nav-cta):hover::after,
+.nav-links a[aria-current="page"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.nav-links a:not(.nav-cta):hover {
+  transform: translateY(-1px);
+}
+.brand-logo-wrap {
+  transition: transform 520ms var(--ease-out-expo), opacity 300ms ease;
+}
+.brand:hover .brand-logo-wrap {
+  transform: translateY(-1px) scale(1.018);
+}
+
+/* Hero: masked image reveal, controlled type choreography, and a light-follow treatment. */
+.hero {
+  isolation: isolate;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 49.92%, rgba(255,255,255,.09) 50%, transparent 50.08%),
+    linear-gradient(0deg, transparent 49.92%, rgba(255,255,255,.055) 50%, transparent 50.08%),
+    radial-gradient(520px circle at var(--hero-pointer-x, 68%) var(--hero-pointer-y, 42%), rgba(255,255,255,.11), transparent 58%);
+  background-size: 100% 100%, 100% 100%, 100% 100%;
+  opacity: .72;
+  mix-blend-mode: soft-light;
+}
+.hero-grid::before {
+  content: "01 / HOME";
+  position: absolute;
+  top: 118px;
+  left: 0;
+  font: 700 .62rem/1 var(--sans);
+  letter-spacing: .18em;
+  opacity: .48;
+}
+.wow-enhanced:not(.wow-ready) .hero-media {
+  opacity: 1;
+  clip-path: inset(0 0 100% 0);
+  transform: scale(1.065);
+}
+.wow-enhanced.wow-ready .hero-media {
+  clip-path: inset(0 0 0 0);
+  transform: scale(1);
+  transition:
+    clip-path 1050ms var(--ease-out-expo) 40ms,
+    transform 1500ms var(--ease-out-expo) 40ms,
+    opacity 850ms ease;
+}
+.hero-media img {
+  transform:
+    translate3d(
+      var(--hero-mouse-x, 0px),
+      calc(var(--hero-shift-px, 0px) + var(--hero-mouse-y, 0px)),
+      0
+    )
+    scale(1.055);
+  transition: transform 900ms var(--ease-out-expo);
+  will-change: transform;
+}
+.hero-title {
+  overflow: visible;
+}
+.hero-line {
+  display: block;
+  transform-origin: left bottom;
+}
+.wow-enhanced:not(.wow-ready) .hero-line {
+  opacity: 0;
+  transform: translateY(115%) rotate(1.2deg);
+  filter: blur(8px);
+}
+.wow-enhanced.wow-ready .hero-line {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition:
+    transform 920ms var(--ease-out-expo),
+    opacity 520ms ease,
+    filter 720ms ease;
+}
+.wow-enhanced.wow-ready .hero-line:nth-child(1) { transition-delay: 190ms; }
+.wow-enhanced.wow-ready .hero-line:nth-child(2) { transition-delay: 270ms; }
+
+.wow-enhanced:not(.wow-ready) .hero .eyebrow,
+.wow-enhanced:not(.wow-ready) .hero-copy,
+.wow-enhanced:not(.wow-ready) .hero-actions,
+.wow-enhanced:not(.wow-ready) .hero-note,
+.wow-enhanced:not(.wow-ready) .scroll-cue {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.wow-enhanced.wow-ready .hero .eyebrow,
+.wow-enhanced.wow-ready .hero-copy,
+.wow-enhanced.wow-ready .hero-actions,
+.wow-enhanced.wow-ready .hero-note,
+.wow-enhanced.wow-ready .scroll-cue {
+  opacity: 1;
+  transform: none;
+  transition: opacity 560ms ease, transform 780ms var(--ease-out-expo);
+}
+.wow-enhanced.wow-ready .hero .eyebrow { transition-delay: 120ms; }
+.wow-enhanced.wow-ready .hero-copy { transition-delay: 390ms; }
+.wow-enhanced.wow-ready .hero-actions { transition-delay: 470ms; }
+.wow-enhanced.wow-ready .hero-note { transition-delay: 560ms; }
+.wow-enhanced.wow-ready .scroll-cue { transition-delay: 650ms; }
+
+.hero-note {
+  border-radius: 2px;
+  border-left: 1px solid rgba(255,255,255,.56);
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,.08), transparent);
+  padding: 16px 0 16px 18px;
+  backdrop-filter: none;
+}
+.scroll-cue {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.scroll-cue::before {
+  content: "";
+  width: 38px;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left;
+  animation: cueLine 2.4s var(--ease-out-expo) infinite;
+}
+@keyframes cueLine {
+  0%, 20% { transform: scaleX(.22); opacity: .35; }
+  55% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(.22); opacity: .35; }
+}
+
+/* Buttons: tailored, tactile, not bouncy. */
+.button {
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+  transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0);
+  transition:
+    transform 300ms var(--ease-out-expo),
+    background 280ms ease,
+    color 280ms ease,
+    border-color 280ms ease,
+    box-shadow 300ms ease;
+}
+.button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: .07;
+  transform: translateX(-105%);
+  transition: transform 480ms var(--ease-out-expo);
+  pointer-events: none;
+}
+.button:hover::before,
+.button:focus-visible::before {
+  transform: translateX(0);
+}
+.button:hover {
+  transform: translate3d(var(--mag-x, 0px), calc(var(--mag-y, 0px) - 2px), 0);
+  box-shadow: 0 12px 28px rgba(8,30,55,.12);
+}
+.button:active {
+  transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0) scale(.985);
+}
+.button:focus-visible,
+.service:focus-visible,
+.nav-links a:focus-visible,
+.gallery-item:focus-visible {
+  outline: 2px solid #6d99c6;
+  outline-offset: 4px;
+}
+
+/* Photography becomes full-bleed editorial material instead of card thumbnails. */
+.photo-card,
+.work-card,
+.gallery-item,
+.about-image,
+.testimonial-stage,
+.cta-band,
+.process-card {
+  border-radius: 8px;
+}
+.about-image {
+  position: relative;
+  overflow: hidden;
+}
+.photo-card {
+  box-shadow: 0 36px 90px rgba(7,31,58,.12);
+}
+.photo-card::before,
+.work-card::before,
+.gallery-item::before,
+.about-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 28%, rgba(255,255,255,.19) 48%, transparent 68%);
+  transform: translateX(-125%);
+  opacity: 0;
+}
+.photo-card.wow-visible::before,
+.work-card.wow-visible::before,
+.gallery-item.wow-visible::before,
+.about-image.wow-visible::before {
+  animation: cleanSweep 1100ms var(--ease-out-expo) 160ms both;
+}
+@keyframes cleanSweep {
+  0% { transform: translateX(-125%); opacity: 0; }
+  20% { opacity: .55; }
+  100% { transform: translateX(125%); opacity: 0; }
+}
+.photo-card .caption {
+  left: 0;
+  right: auto;
+  bottom: 0;
+  width: min(86%, 420px);
+  padding: 18px 20px;
+  border-radius: 0 8px 0 0;
+  background: rgba(248,245,239,.92);
+  border-top: 1px solid rgba(255,255,255,.7);
+  border-right: 1px solid rgba(255,255,255,.7);
+}
+.proof-grid {
+  gap: 12px;
+}
+.stacked {
+  gap: 12px;
+}
+
+/* Services: editorial rows with real-work imagery revealed on hover. */
+.service-grid {
+  gap: 0;
+  overflow: hidden;
+}
+.service {
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 390px;
+  transition:
+    color 420ms var(--ease-out-expo),
+    background 420ms var(--ease-out-expo),
+    padding 420ms var(--ease-out-expo);
+}
+.service > * {
+  position: relative;
+  z-index: 3;
+}
+.service::before {
+  content: "";
+  position: absolute;
+  inset: 100% 0 0;
+  z-index: 0;
+  background: var(--navy);
+  transition: inset 620ms var(--ease-out-expo);
+}
+.service::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  opacity: 0;
+  transform: scale(1.08);
+  filter: saturate(.78) contrast(1.05);
+  transition:
+    opacity 480ms ease 80ms,
+    transform 850ms var(--ease-out-expo);
+  mix-blend-mode: luminosity;
+}
+.service:nth-child(1)::after { background-image: linear-gradient(rgba(4,25,52,.76),rgba(4,25,52,.86)), url('/images/living-room-premium.webp'); }
+.service:nth-child(2)::after { background-image: linear-gradient(rgba(4,25,52,.76),rgba(4,25,52,.86)), url('/images/kitchen-floor-premium.webp'); }
+.service:nth-child(3)::after { background-image: linear-gradient(rgba(4,25,52,.76),rgba(4,25,52,.86)), url('/images/bathroom-detail.webp'); }
+.service:nth-child(4)::after { background-image: linear-gradient(rgba(4,25,52,.76),rgba(4,25,52,.86)), url('/images/kitchen-detail.webp'); }
+@media (hover:hover) and (pointer:fine) {
+  .service:hover,
+  .service:focus-visible {
+    color: white;
+  }
+  .service:hover::before,
+  .service:focus-visible::before {
+    inset: 0;
+  }
+  .service:hover::after,
+  .service:focus-visible::after {
+    opacity: .26;
+    transform: scale(1);
+  }
+  .service:hover p,
+  .service:focus-visible p,
+  .service:hover .service-index,
+  .service:focus-visible .service-index {
+    color: rgba(255,255,255,.76);
+  }
+  .service:hover .service-icon,
+  .service:focus-visible .service-icon {
+    border-color: rgba(255,255,255,.55);
+    transform: rotate(45deg);
+    background: rgba(255,255,255,.1);
+  }
+}
+.service h3 {
+  font-size: clamp(1.9rem, 2.3vw, 2.65rem);
+  line-height: .98;
+}
+.service-icon {
+  border-radius: 2px;
+  transition: transform 520ms var(--ease-out-expo), background 280ms ease, border-color 280ms ease;
+}
+
+/* Before / after: make the physical interaction the hero. */
+.before-after-section {
+  overflow: hidden;
+}
+.before-after-section::after {
+  content: "DRAG  /  REVEAL";
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: rotate(90deg) translateX(50%);
+  transform-origin: right top;
+  font: 700 .61rem/1 var(--sans);
+  letter-spacing: .23em;
+  color: rgba(255,255,255,.36);
+  pointer-events: none;
+}
+.ba {
+  border-radius: 6px;
+  outline: 1px solid rgba(255,255,255,.16);
+  outline-offset: -1px;
+}
+.ba::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+}
+.ba-handle {
+  width: 54px;
+  height: 54px;
+  border-radius: 2px;
+  transition: transform 260ms var(--ease-out-expo), box-shadow 260ms ease;
+}
+.ba:hover .ba-handle,
+.ba.is-dragging .ba-handle {
+  transform: translate(-50%,-50%) scale(1.08);
+  box-shadow: 0 12px 34px rgba(0,0,0,.27);
+}
+.ba-label {
+  border-radius: 2px;
+  background: rgba(5,26,53,.74);
+}
+
+/* Process and quote moments */
+.process-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 520ms var(--ease-out-expo), box-shadow 520ms var(--ease-out-expo);
+}
+.process-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  opacity: .35;
+  transition: width 760ms var(--ease-out-expo);
+}
+.process-card.wow-visible::after {
+  width: 100%;
+}
+@media (hover:hover) and (pointer:fine) {
+  .process-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 24px 60px rgba(8,30,55,.12);
+  }
+}
+.testimonial-stage {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.16), transparent 42%),
+    #e7dccd;
+  border: 1px solid rgba(13,27,42,.08);
+}
+.testimonial-stage::before {
+  content: "";
+  position: absolute;
+  left: clamp(28px,5vw,64px);
+  top: 0;
+  width: 1px;
+  height: 0;
+  background: rgba(13,27,42,.32);
+  transition: height 900ms var(--ease-out-expo);
+}
+.testimonial-stage.wow-visible::before {
+  height: 72px;
+}
+
+/* Gallery: tactile horizontal editorial strip. */
+.gallery-track {
+  cursor: grab;
+  scroll-padding-inline: max(18px, calc((100vw - 1180px)/2));
+}
+.gallery-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+}
+.gallery-item {
+  border-radius: 4px;
+  transition: transform 600ms var(--ease-out-expo), opacity 500ms ease;
+}
+.gallery-item small {
+  border-radius: 2px;
+  padding: 8px 11px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: .64rem;
+}
+@media (hover:hover) and (pointer:fine) {
+  .gallery-item:hover {
+    transform: translateY(-8px);
+  }
+}
+
+/* CTA gets a subtle architectural drawing system. */
+.cta-band {
+  border-radius: 8px;
+}
+.cta-band::before {
+  border-radius: 0;
+  border-color: rgba(255,255,255,.1);
+  transform: rotate(22deg);
+}
+.cta-band::after {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(255,255,255,.09);
+  pointer-events: none;
+}
+.cta-band .button {
+  z-index: 1;
+}
+
+/* Inner-page hero choreography */
+.page-hero {
+  min-height: min(64svh, 680px);
+  display: flex;
+  align-items: end;
+}
+.page-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0 69%, rgba(255,255,255,.07) 69% 69.08%, transparent 69.08%),
+    linear-gradient(0deg, transparent 0 28%, rgba(255,255,255,.06) 28% 28.08%, transparent 28.08%);
+}
+.page-hero .container {
+  position: relative;
+}
+.page-hero .container::after {
+  content: attr(data-page-label);
+  position: absolute;
+  right: 0;
+  bottom: 6px;
+  font: 700 .62rem/1 var(--sans);
+  letter-spacing: .18em;
+  opacity: .42;
+}
+.wow-enhanced:not(.wow-ready) .page-hero h1 {
+  opacity: 0;
+  transform: translateY(44px);
+  filter: blur(7px);
+}
+.wow-enhanced.wow-ready .page-hero h1 {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: opacity 560ms ease 130ms, transform 900ms var(--ease-out-expo) 130ms, filter 700ms ease 130ms;
+}
+
+/* Page transition veil: fast and deliberately subtle. */
+.page-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  pointer-events: none;
+  background: var(--navy);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 300ms var(--ease-out-expo);
+}
+body.is-leaving .page-wipe {
+  transform: scaleY(1);
+}
+body.is-leaving main,
+body.is-leaving .site-header {
+  opacity: .74;
+  transform: translateY(-5px);
+  transition: opacity 220ms ease, transform 260ms var(--ease-out-expo);
+}
+
+/* Mouse-follow variables should never leak onto touch. */
+@media (pointer:fine) {
+  .hero {
+    --hero-pointer-x: 68%;
+    --hero-pointer-y: 42%;
+  }
+}
+
+/* Mobile: preserve the current layout, but make interactions feel authored. */
+@media (max-width: 980px) {
+  .nav-links {
+    transition: opacity 260ms ease, transform 420ms var(--ease-out-expo);
+  }
+  .nav-links.open a,
+  .nav-links.open .nav-cta {
+    animation: menuItemIn 520ms var(--ease-out-expo) both;
+  }
+  .nav-links.open a:nth-child(1) { animation-delay: 40ms; }
+  .nav-links.open a:nth-child(2) { animation-delay: 80ms; }
+  .nav-links.open a:nth-child(3) { animation-delay: 120ms; }
+  .nav-links.open a:nth-child(4) { animation-delay: 160ms; }
+  .nav-links.open .nav-cta { animation-delay: 200ms; }
+  @keyframes menuItemIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@media (max-width: 680px) {
+  .hero::before {
+    background:
+      linear-gradient(90deg, transparent 49.9%, rgba(255,255,255,.055) 50%, transparent 50.1%),
+      radial-gradient(340px circle at 70% 26%, rgba(255,255,255,.09), transparent 62%);
+  }
+  .hero-grid::before {
+    top: 14px;
+    font-size: .56rem;
+  }
+  .hero h1 {
+    letter-spacing: -.056em;
+    line-height: .9;
+  }
+  .hero-note {
+    border-left-width: 1px;
+    border-radius: 0;
+  }
+  .section[data-section-index]::before {
+    left: 18px;
+    top: 22px;
+    font-size: .58rem;
+  }
+  .section[data-section-index]::after {
+    left: 54px;
+    top: 37px;
+    width: 56px;
+  }
+  .photo-card,
+  .work-card,
+  .gallery-item,
+  .about-image,
+  .testimonial-stage,
+  .cta-band,
+  .process-card {
+    border-radius: 4px;
+  }
+  .photo-card .caption {
+    width: calc(100% - 14px);
+    border-radius: 0 4px 0 0;
+  }
+  .service {
+    min-height: 0;
+  }
+  .service::after {
+    display: none;
+  }
+  .service-icon {
+    border-radius: 2px;
+  }
+  .before-after-section::after {
+    display: none;
+  }
+  .ba {
+    border-radius: 4px;
+  }
+  .cta-band::after {
+    inset: 10px;
+  }
+  .gallery-item:hover {
+    transform: none;
+  }
+}
+
+/* Accessibility / motion safety */
+@media (prefers-reduced-motion: reduce) {
+  .wow-enhanced .hero-media,
+  .wow-enhanced .hero-line,
+  .wow-enhanced .hero .eyebrow,
+  .wow-enhanced .hero-copy,
+  .wow-enhanced .hero-actions,
+  .wow-enhanced .hero-note,
+  .wow-enhanced .scroll-cue,
+  .wow-enhanced .page-hero h1 {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+  .scroll-cue::before,
+  .photo-card::before,
+  .work-card::before,
+  .gallery-item::before,
+  .about-image::before,
+  .nav-links.open a,
+  .nav-links.open .nav-cta {
+    animation: none !important;
+  }
+  .page-wipe {
+    display: none !important;
+  }
+  .button,
+  .service,
+  .process-card,
+  .gallery-item,
+  .hero-media img {
+    transition-duration: 0.01ms !important;
   }
 }

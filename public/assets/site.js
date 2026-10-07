@@ -276,3 +276,162 @@
     });
   });
 })();
+
+/* === CLEAN SPACE WOW MOTION PASS === */
+(() => {
+  const body = document.body;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  body.classList.add('wow-enhanced');
+
+  const ready = () => body.classList.add('wow-ready');
+  if (reduceMotion) {
+    ready();
+  } else {
+    Promise.race([
+      document.fonts?.ready || Promise.resolve(),
+      new Promise((resolve) => setTimeout(resolve, 420))
+    ]).then(() => requestAnimationFrame(() => requestAnimationFrame(ready)));
+  }
+
+  // Add restrained editorial numbering to the major sections.
+  document.querySelectorAll('main > .section').forEach((section, index) => {
+    section.dataset.sectionIndex = String(index + 1).padStart(2, '0');
+  });
+
+  // Label inner-page hero canvases without changing business copy.
+  const pageHero = document.querySelector('.page-hero .container');
+  if (pageHero) {
+    const labels = {
+      '/services': '02 / SERVICES',
+      '/work': '03 / WORK',
+      '/about': '04 / ABOUT',
+      '/contact': '05 / CONTACT'
+    };
+    const path = location.pathname.replace(/\/$/, '') || '/';
+    pageHero.dataset.pageLabel = labels[path] || '';
+  }
+
+  // One observer powers graphic reveals and clean-sweep image moments.
+  const wowTargets = document.querySelectorAll(
+    '.section, .photo-card, .work-card, .gallery-item, .about-image, .process-card, .testimonial-stage'
+  );
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    const wowObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('wow-visible');
+        wowObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.14, rootMargin: '0px 0px -6% 0px' });
+    wowTargets.forEach((el) => wowObserver.observe(el));
+  } else {
+    wowTargets.forEach((el) => el.classList.add('wow-visible'));
+  }
+
+  // A very small parallax/light-follow treatment on pointer devices only.
+  const hero = document.querySelector('.hero');
+  if (hero && window.matchMedia('(pointer:fine)').matches && !reduceMotion) {
+    let heroFrame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    const paintHero = () => {
+      heroFrame = 0;
+      hero.style.setProperty('--hero-pointer-x', `${50 + pointerX * 22}%`);
+      hero.style.setProperty('--hero-pointer-y', `${46 + pointerY * 16}%`);
+      hero.style.setProperty('--hero-mouse-x', `${pointerX * 7}px`);
+      hero.style.setProperty('--hero-mouse-y', `${pointerY * 5}px`);
+    };
+    hero.addEventListener('pointermove', (event) => {
+      const rect = hero.getBoundingClientRect();
+      pointerX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - .5) * 2));
+      pointerY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - .5) * 2));
+      if (!heroFrame) heroFrame = requestAnimationFrame(paintHero);
+    }, { passive: true });
+    hero.addEventListener('pointerleave', () => {
+      pointerX = 0;
+      pointerY = 0;
+      if (!heroFrame) heroFrame = requestAnimationFrame(paintHero);
+    }, { passive: true });
+  }
+
+  // Tactile magnetic motion is deliberately limited to primary desktop actions.
+  if (window.matchMedia('(pointer:fine)').matches && !reduceMotion) {
+    document.querySelectorAll('.hero-actions .button, .nav-cta, .cta-band .button').forEach((button) => {
+      button.addEventListener('pointermove', (event) => {
+        const rect = button.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width - .5) * 7;
+        const y = ((event.clientY - rect.top) / rect.height - .5) * 5;
+        button.style.setProperty('--mag-x', `${x}px`);
+        button.style.setProperty('--mag-y', `${y}px`);
+      }, { passive: true });
+      button.addEventListener('pointerleave', () => {
+        button.style.setProperty('--mag-x', '0px');
+        button.style.setProperty('--mag-y', '0px');
+      }, { passive: true });
+    });
+  }
+
+  // Desktop gallery can be scrubbed with the mouse; touch keeps native swipe.
+  const gallery = document.querySelector('.gallery-track');
+  if (gallery && window.matchMedia('(pointer:fine)').matches) {
+    let dragging = false;
+    let startX = 0;
+    let startScroll = 0;
+    gallery.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      dragging = true;
+      startX = event.clientX;
+      startScroll = gallery.scrollLeft;
+      gallery.classList.add('is-dragging');
+      gallery.setPointerCapture?.(event.pointerId);
+    });
+    gallery.addEventListener('pointermove', (event) => {
+      if (!dragging) return;
+      gallery.scrollLeft = startScroll - (event.clientX - startX);
+    });
+    const endDrag = (event) => {
+      if (!dragging) return;
+      dragging = false;
+      gallery.classList.remove('is-dragging');
+      try { gallery.releasePointerCapture?.(event.pointerId); } catch (_) {}
+    };
+    gallery.addEventListener('pointerup', endDrag);
+    gallery.addEventListener('pointercancel', endDrag);
+    gallery.addEventListener('lostpointercapture', () => {
+      dragging = false;
+      gallery.classList.remove('is-dragging');
+    });
+  }
+
+  // Fast transition veil for actual page changes. Hash jumps, external links and
+  // new-tab links are intentionally left native.
+  const wipe = document.createElement('div');
+  wipe.className = 'page-wipe';
+  wipe.setAttribute('aria-hidden', 'true');
+  body.appendChild(wipe);
+
+  if (!reduceMotion) {
+    document.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = event.target.closest('a[href]');
+      if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+
+      const url = new URL(anchor.href, location.href);
+      if (url.origin !== location.origin) return;
+      if (url.pathname === location.pathname && url.search === location.search && url.hash) return;
+      if (url.href === location.href) return;
+
+      event.preventDefault();
+      body.classList.add('is-leaving');
+      window.setTimeout(() => {
+        location.href = url.href;
+      }, 220);
+    });
+  }
+
+  // bfcache / back-swipe should never return to a veiled page.
+  window.addEventListener('pageshow', () => {
+    body.classList.remove('is-leaving');
+    if (!body.classList.contains('wow-ready')) ready();
+  });
+})();
